@@ -24,7 +24,13 @@
 
     <section class="add-card">
       <label for="placeInput">Dove siamo stati?</label>
-      <div class="place-row"><input id="placeInput" type="text" autocomplete="off" placeholder="Es. San Benedetto del Tronto" maxlength="80" /><button id="voiceBtn" class="mic-btn" type="button" aria-label="Inserimento vocale">🎙️</button></div>
+      <div class="place-row">
+        <div class="place-input-wrap">
+          <input id="placeInput" type="text" autocomplete="off" spellcheck="false" placeholder="Es. San Benedetto del Tronto" maxlength="80" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="placeSuggestions" />
+          <div id="placeSuggestions" class="place-suggestions" role="listbox" hidden></div>
+        </div>
+        <button id="voiceBtn" class="mic-btn" type="button" aria-label="Inserimento vocale">🎙️</button>
+      </div>
       <div id="voiceHint" class="voice-hint" aria-live="polite"></div>
 
       <div class="visited-block">
@@ -67,7 +73,7 @@
       </div>
 
       <div id="mapPanel" class="map-panel" hidden>
-        <div id="map" class="map-canvas" aria-label="Mappa dei posti visitati"></div>
+        <div class="map-stage"><div id="map" class="map-canvas" aria-label="Mappa dei posti visitati"></div></div>
         <div class="map-footer">
           <div id="mapStatus" class="map-status">Preparo la mappa…</div>
           <div class="map-legend"><span><b class="legend-dot marco">M</b> Marco</span><span><b class="legend-dot ale">A</b> Ale</span><span><b class="legend-dot both">♥</b> Entrambi</span></div>
