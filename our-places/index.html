@@ -8,6 +8,7 @@
   <title>I nostri luoghi comuni 🧲</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3ynTo2DInQh6B0PC3AZOFmPMZBqyw=" crossorigin="" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="v4.css" />
 </head>
 <body>
   <main class="app-shell">
@@ -84,11 +85,41 @@
   </main>
 
   <dialog id="profileDialog" class="profile-dialog"><form method="dialog"><span class="eyebrow">IDENTITÀ SEGRETISSIMA</span><h2>Chi sta usando l'app?</h2><p>Serve per sapere chi sta inserendo i ricordi. Non decide chi ha visitato il posto.</p><div class="profile-options"><button value="Marco" data-profile="Marco" type="submit"><span>M</span>Marco</button><button value="Ale" data-profile="Ale" type="submit"><span>A</span>Ale</button></div></form></dialog>
+
+  <dialog id="editDialog" class="edit-dialog">
+    <form method="dialog" class="edit-form" onsubmit="return false">
+      <span class="eyebrow">AGGIORNA IL RICORDO</span>
+      <h2>Modifica luogo</h2>
+      <p>Utile quando un posto da “solo uno dei due” diventa finalmente un posto vostro. 😌</p>
+
+      <label class="edit-field"><span>Luogo</span><input id="editName" type="text" maxlength="80" autocomplete="off" /></label>
+
+      <div class="edit-field">
+        <span class="edit-label">Chi c'è stato?</span>
+        <div class="edit-choice" role="radiogroup" aria-label="Modifica chi ha visitato il luogo">
+          <label><input type="radio" name="editVisitedBy" value="M"><span>Marco</span></label>
+          <label><input type="radio" name="editVisitedBy" value="A"><span>Ale</span></label>
+          <label><input type="radio" name="editVisitedBy" value="B"><span>Entrambi ❤️</span></label>
+        </div>
+      </div>
+
+      <label class="edit-field"><span>Data</span><input id="editDate" type="date" /></label>
+      <label class="edit-magnet"><input id="editMagnet" type="checkbox"><span>🧲 Calamita già presa</span></label>
+      <div id="editGeoHint" class="edit-geo-hint"></div>
+
+      <div class="edit-actions">
+        <button class="edit-cancel" type="button" onclick="document.getElementById('editDialog').close()">Annulla</button>
+        <button id="editSave" class="edit-save" type="button">Salva modifiche</button>
+      </div>
+    </form>
+  </dialog>
+
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script>window.__OUR_PLACES_ROOT__ = 'places-bf713b846780128373c99fc2';</script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="app.js"></script>
   <script src="storage-fix.js"></script>
   <script src="city-index.js"></script>
+  <script src="app-v4.js"></script>
 </body>
 </html>
