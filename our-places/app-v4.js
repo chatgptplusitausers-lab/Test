@@ -73,7 +73,6 @@
     return dedupe([...regions,...live],limit);
   };
 
-  // Filtri esclusivi: Marco non include Entrambi, idem Ale.
   matchesFilter = function(p) {
     if (activeFilter === 'all') return true;
     if (activeFilter === 'M') return p.v === 'M';
@@ -282,8 +281,8 @@
   editSave?.addEventListener('click',saveEditor);
   editDialog?.addEventListener('close',()=>{editingId=null;});
 
-  // L'input di ricerca aveva già un listener con il vecchio render: questo garantisce
-  // che l'ultimo rendering usi anche i nuovi pulsanti Modifica.
   el.searchInput.addEventListener('input',()=>render());
   window.addEventListener('orientationchange',()=>{ if(activeView==='map') setTimeout(()=>hardResizeMap(),160); },{passive:true});
+
+  render();
 })();
