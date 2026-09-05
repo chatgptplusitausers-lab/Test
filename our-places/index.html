@@ -11,11 +11,7 @@
 <body>
   <main class="app-shell">
     <header class="hero">
-      <div class="hero-copy">
-        <span class="eyebrow">MARCO + ALE</span>
-        <h1>I nostri<br><em>luoghi comuni</em> 🧲</h1>
-        <p>Posti visti, ricordi presi. E calamite, ovviamente.</p>
-      </div>
+      <div class="hero-copy"><span class="eyebrow">MARCO + ALE</span><h1>I nostri<br><em>luoghi comuni</em> 🧲</h1><p>Posti visti, ricordi presi. E calamite, ovviamente.</p></div>
       <button id="profileBtn" class="profile" type="button" aria-label="Cambia profilo">M</button>
     </header>
 
@@ -27,57 +23,40 @@
 
     <section class="add-card">
       <label for="placeInput">Dove siamo stati?</label>
-      <div class="place-row">
-        <input id="placeInput" type="text" autocomplete="off" placeholder="Es. Tropea" maxlength="80" />
-        <button id="voiceBtn" class="mic-btn" type="button" aria-label="Inserimento vocale">🎙️</button>
-      </div>
+      <div class="place-row"><input id="placeInput" type="text" autocomplete="off" placeholder="Es. Albania" maxlength="80" /><button id="voiceBtn" class="mic-btn" type="button" aria-label="Inserimento vocale">🎙️</button></div>
       <div id="voiceHint" class="voice-hint" aria-live="polite"></div>
-      <div class="details-row">
-        <input id="dateInput" type="date" />
-        <label class="magnet-toggle"><input id="magnetInput" type="checkbox" checked /><span>🧲 Calamita presa</span></label>
+
+      <div class="visited-block">
+        <span class="field-label">Chi c'è stato?</span>
+        <div class="visit-choice" role="radiogroup" aria-label="Chi ha visitato il luogo">
+          <label><input type="radio" name="visitedBy" value="M" checked><span>Marco</span></label>
+          <label><input type="radio" name="visitedBy" value="A"><span>Ale</span></label>
+          <label><input type="radio" name="visitedBy" value="B"><span>Entrambi ❤️</span></label>
+        </div>
       </div>
+
+      <div class="details-row"><input id="dateInput" type="date" /><label class="magnet-toggle"><input id="magnetInput" type="checkbox" checked /><span>🧲 Calamita già presa</span></label></div>
       <button id="addBtn" class="primary-btn" type="button">Aggiungi al nostro mondo <span>＋</span></button>
     </section>
 
     <section class="places-section">
-      <div class="section-head">
-        <div>
-          <span class="eyebrow">IL NOSTRO ATLANTE</span>
-          <h2>Posti visitati</h2>
-        </div>
-        <button id="refreshBtn" class="icon-btn" type="button" aria-label="Aggiorna">↻</button>
+      <div class="section-head"><div><span class="eyebrow">IL NOSTRO ATLANTE</span><h2>Posti visitati</h2></div><button id="refreshBtn" class="icon-btn" type="button" aria-label="Aggiorna">↻</button></div>
+      <div class="search-wrap"><span>⌕</span><input id="searchInput" type="search" placeholder="Cerca un posto…" /></div>
+      <div class="filter-row" id="filterRow">
+        <button type="button" class="filter-chip active" data-filter="all">Tutti</button>
+        <button type="button" class="filter-chip" data-filter="M">Marco</button>
+        <button type="button" class="filter-chip" data-filter="A">Ale</button>
+        <button type="button" class="filter-chip" data-filter="B">Entrambi</button>
+        <button type="button" class="filter-chip" data-filter="missing">🧲 Da prendere</button>
       </div>
-
-      <div class="search-wrap">
-        <span>⌕</span>
-        <input id="searchInput" type="search" placeholder="Cerca un posto…" />
-      </div>
-
       <div id="syncStatus" class="sync-status" aria-live="polite">Connessione…</div>
       <div id="placesList" class="places-list"></div>
-
-      <div id="emptyState" class="empty-state" hidden>
-        <div class="empty-icon">🧳</div>
-        <h3>Il mondo è ancora vuoto.</h3>
-        <p>Aggiungi il primo posto e facciamola finita con questa desolazione.</p>
-      </div>
+      <div id="emptyState" class="empty-state" hidden><div class="empty-icon">🧳</div><h3>Nessun posto qui.</h3><p>Cambia filtro oppure aggiungine uno nuovo.</p></div>
     </section>
   </main>
 
-  <dialog id="profileDialog" class="profile-dialog">
-    <form method="dialog">
-      <span class="eyebrow">IDENTITÀ SEGRETISSIMA</span>
-      <h2>Chi sta aggiungendo?</h2>
-      <p>Serve solo per firmare i vostri ricordi. La CIA può stare serena.</p>
-      <div class="profile-options">
-        <button value="Marco" data-profile="Marco" type="submit"><span>M</span>Marco</button>
-        <button value="Ale" data-profile="Ale" type="submit"><span>A</span>Ale</button>
-      </div>
-    </form>
-  </dialog>
-
+  <dialog id="profileDialog" class="profile-dialog"><form method="dialog"><span class="eyebrow">IDENTITÀ SEGRETISSIMA</span><h2>Chi sta usando l'app?</h2><p>Serve per sapere chi sta inserendo i ricordi. Non decide chi ha visitato il posto.</p><div class="profile-options"><button value="Marco" data-profile="Marco" type="submit"><span>M</span>Marco</button><button value="Ale" data-profile="Ale" type="submit"><span>A</span>Ale</button></div></form></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
   <script>window.__OUR_PLACES_ROOT__ = 'places-bf713b846780128373c99fc2';</script>
   <script src="app.js"></script>
 </body>
