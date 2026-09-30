@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#06101d" />
+  <title>Energia Casa</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow"><span class="live-dot"></span><span id="statusText">LIVE</span></div>
+        <h1>Casa</h1>
+        <p id="updatedAt">Connessione…</p>
+      </div>
+      <div class="actions">
+        <button id="settingsBtn" class="icon-btn" aria-label="Impostazioni">⚙</button>
+        <button id="refreshBtn" class="icon-btn refresh" aria-label="Aggiorna">↻</button>
+      </div>
+    </header>
+
+    <section class="metric input-card">
+      <div class="metric-icon">☀</div>
+      <div class="metric-copy">
+        <span>Energia in ingresso</span>
+        <strong><span id="inputValue">--</span><small> kW</small></strong>
+        <p>Produzione fotovoltaico</p>
+      </div>
+    </section>
+
+    <section class="home-flow">
+      <div class="flow-line green"></div>
+      <div class="house-visual">
+        <div class="solar-panel"></div>
+        <div class="house">⌂</div>
+        <span>CASA</span>
+      </div>
+      <div class="flow-line blue"></div>
+    </section>
+
+    <section class="metric usage-card">
+      <div class="metric-icon">⌂</div>
+      <div class="metric-copy">
+        <span>Energia in uso</span>
+        <strong><span id="usageValue">--</span><small> kW</small></strong>
+        <p>Consumo casa</p>
+      </div>
+    </section>
+
+    <section class="metric export-card">
+      <div class="metric-icon">⚡</div>
+      <div class="metric-copy">
+        <span>Energia che butto al contatore</span>
+        <strong><span id="exportValue">--</span><small> kW</small></strong>
+        <p>Immissione in rete</p>
+      </div>
+    </section>
+
+    <section class="summary-card">
+      <div>
+        <span>Adesso</span>
+        <strong id="summaryText">Sto leggendo i dati…</strong>
+      </div>
+      <div id="demoBadge" class="badge">DEMO</div>
+    </section>
+
+    <section id="errorCard" class="error-card" hidden>
+      <strong>Connessione non riuscita</strong>
+      <p id="errorText"></p>
+    </section>
+  </main>
+
+  <div id="settingsModal" class="modal" hidden>
+    <div class="modal-card">
+      <div class="modal-head">
+        <div><span class="eyebrow-text">CONFIGURAZIONE</span><h2>Dati reali</h2></div>
+        <button id="closeSettings" class="close-btn">×</button>
+      </div>
+
+      <label class="switch-row">
+        <span><strong>Modalità demo</strong><small>Usa valori simulati per provare l’app</small></span>
+        <input id="demoInput" type="checkbox" />
+      </label>
+
+      <h3>SolarEdge</h3>
+      <label>Site ID<input id="solarSiteId" autocomplete="off" /></label>
+      <label>API key<input id="solarApiKey" type="password" autocomplete="off" /></label>
+
+      <h3>Shelly Cloud</h3>
+      <label>Host / Server URI<input id="shellyHost" placeholder="es. shelly-xx-eu.shelly.cloud" autocomplete="off" /></label>
+      <label>Authorization key<input id="shellyAuthKey" type="password" autocomplete="off" /></label>
+      <label>Device ID<input id="shellyDeviceId" autocomplete="off" /></label>
+
+      <p class="security-note">Le credenziali restano sul telefono, nello spazio privato dell’app. Non vengono inviate a server nostri.</p>
+      <button id="saveSettings" class="primary-btn">Salva e collega</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
