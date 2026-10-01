@@ -64,11 +64,18 @@ public class MainActivity extends Activity {
             this.webView = webView;
         }
 
+        private boolean sourceDemo(String key) {
+            if (prefs.contains(key)) return prefs.getBoolean(key, true);
+            // Migrazione dalla v1 che aveva un solo interruttore demo per entrambe le fonti.
+            return prefs.getBoolean("demo", true);
+        }
+
         @JavascriptInterface
         public String getConfig() {
             try {
                 JSONObject j = new JSONObject();
-                j.put("demo", prefs.getBoolean("demo", true));
+                j.put("solarDemo", sourceDemo("solarDemo"));
+                j.put("shellyDemo", sourceDemo("shellyDemo"));
                 j.put("solarSiteId", prefs.getString("solarSiteId", ""));
                 j.put("solarApiKey", prefs.getString("solarApiKey", ""));
                 j.put("shellyHost", prefs.getString("shellyHost", ""));
@@ -85,7 +92,8 @@ public class MainActivity extends Activity {
             try {
                 JSONObject j = new JSONObject(json);
                 prefs.edit()
-                        .putBoolean("demo", j.optBoolean("demo", true))
+                        .putBoolean("solarDemo", j.optBoolean("solarDemo", true))
+                        .putBoolean("shellyDemo", j.optBoolean("shellyDemo", true))
                         .putString("solarSiteId", j.optString("solarSiteId", ""))
                         .putString("solarApiKey", j.optString("solarApiKey", ""))
                         .putString("shellyHost", j.optString("shellyHost", ""))
@@ -98,42 +106,87 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void requestData() {
             new Thread(() -> {
-                JSONObject result;
+                JSONObject result = new JSONObject();
                 try {
-                    boolean demo = prefs.getBoolean("demo", true);
-                    double solarW;
-                    double useW;
-                    if (demo) {
-                        double t = System.currentTimeMillis() / 1000.0;
-                        solarW = Math.max(0, 3420 + Math.sin(t / 18.0) * 90 + Math.sin(t / 7.0) * 35);
-                        useW = Math.max(120, 1150 + Math.sin(t / 9.0) * 95 + Math.sin(t / 3.7) * 30);
-                    } else {
-                        solarW = getSolarEdgeW();
-                        useW = getShellyW();
-                    }
-                    result = new JSONObject();
-                    result.put("ok", true);
-                    result.put("demo", demo);
-                    result.put("timestamp", Instant.now().toString());
-                    result.put("inputKw", round(solarW / 1000.0));
-                    result.put("usageKw", round(useW / 1000.0));
-                    result.put("exportKw", round(Math.max(0, solarW - useW) / 1000.0));
-                } catch (Exception e) {
-                    result = new JSONObject();
+                    boolean solarDemo = sourceDemo("solarDemo");
+                    boolean shellyDemo = sourceDemo("shellyDemo");
+                    Double solarW = null;
+                    Double useW = null;
+                    String solarError = "";
+                    String shellyError = "";
+
                     try {
+                        solarW = solarDemo ? demoSolarW() : getSolarEdgeW();
+                    } catch (Exception e) {
+                        solarError = safeMessage(e, "SolarEdge non disponibile");
+                    }
+
+                    try {
+                        useW = shellyDemo ? demoShellyW() : getShellyW();
+                    } catch (Exception e) {
+                        shellyError = safeMessage(e, "Shelly non disponibile");
+                    }
+
+                    boolean solarOk = solarW != null;
+                    boolean shellyOk = useW != null;
+                    boolean anyOk = solarOk || shellyOk;
+
+                    result.put("ok", anyOk);
+                    result.put("solarOk", solarOk);
+                    result.put("shellyOk", shellyOk);
+                    result.put("solarDemo", solarDemo);
+                    result.put("shellyDemo", shellyDemo);
+                    result.put("solarError", solarError);
+                    result.put("shellyError", shellyError);
+                    result.put("timestamp", Instant.now().toString());
+                    result.put("inputKw", solarOk ? round(solarW / 1000.0) : JSONObject.NULL);
+                    result.put("usageKw", shellyOk ? round(useW / 1000.0) : JSONObject.NULL);
+                    result.put("exportKw", (solarOk && shellyOk) ? round(Math.max(0, solarW - useW) / 1000.0) : JSONObject.NULL);
+
+                    if (!anyOk) {
+                        String message = joinErrors(solarError, shellyError);
+                        result.put("message", message.isEmpty() ? "Nessuna fonte dati disponibile." : message);
+                    }
+                } catch (Exception e) {
+                    try {
+                        result = new JSONObject();
                         result.put("ok", false);
-                        result.put("message", e.getMessage() == null ? "Errore di connessione" : e.getMessage());
+                        result.put("message", safeMessage(e, "Errore di connessione"));
                     } catch (Exception ignored) { }
                 }
+
                 final String payload = result.toString();
                 webView.post(() -> webView.evaluateJavascript("window.onNativeData(" + payload + ")", null));
             }).start();
         }
 
+        private double demoSolarW() {
+            double t = System.currentTimeMillis() / 1000.0;
+            return Math.max(0, 3420 + Math.sin(t / 18.0) * 90 + Math.sin(t / 7.0) * 35);
+        }
+
+        private double demoShellyW() {
+            double t = System.currentTimeMillis() / 1000.0;
+            return Math.max(120, 1150 + Math.sin(t / 9.0) * 95 + Math.sin(t / 3.7) * 30);
+        }
+
+        private String safeMessage(Exception e, String fallback) {
+            String m = e.getMessage();
+            return (m == null || m.trim().isEmpty()) ? fallback : m;
+        }
+
+        private String joinErrors(String first, String second) {
+            if (first == null) first = "";
+            if (second == null) second = "";
+            if (first.isEmpty()) return second;
+            if (second.isEmpty()) return first;
+            return first + " • " + second;
+        }
+
         private double getSolarEdgeW() throws Exception {
             String siteId = prefs.getString("solarSiteId", "").trim();
             String apiKey = prefs.getString("solarApiKey", "").trim();
-            if (siteId.isEmpty() || apiKey.isEmpty()) throw new Exception("Inserisci Site ID e API key SolarEdge nelle impostazioni.");
+            if (siteId.isEmpty() || apiKey.isEmpty()) throw new Exception("SolarEdge: inserisci Site ID e API key oppure attiva la demo SolarEdge.");
 
             String endpoint = "https://monitoringapi.solaredge.com/site/" +
                     URLEncoder.encode(siteId, "UTF-8") + "/currentPowerFlow?api_key=" +
@@ -152,7 +205,7 @@ public class MainActivity extends Activity {
             String host = prefs.getString("shellyHost", "").trim();
             String auth = prefs.getString("shellyAuthKey", "").trim();
             String device = prefs.getString("shellyDeviceId", "").trim();
-            if (host.isEmpty() || auth.isEmpty() || device.isEmpty()) throw new Exception("Inserisci Host, Authorization key e Device ID Shelly nelle impostazioni.");
+            if (host.isEmpty() || auth.isEmpty() || device.isEmpty()) throw new Exception("Shelly: inserisci Host, Authorization key e Device ID oppure attiva la demo Shelly.");
             host = host.replaceFirst("^https?://", "").replaceAll("/+$", "");
             String endpoint = "https://" + host + "/v2/devices/api/get?auth_key=" + URLEncoder.encode(auth, "UTF-8");
 
