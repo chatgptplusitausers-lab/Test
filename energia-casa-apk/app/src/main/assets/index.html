@@ -26,7 +26,7 @@
       <div class="metric-copy">
         <span>Energia in ingresso</span>
         <strong><span id="inputValue">--</span><small> kW</small></strong>
-        <p>Produzione fotovoltaico</p>
+        <p id="inputSourceLabel">Produzione fotovoltaico</p>
       </div>
     </section>
 
@@ -45,7 +45,7 @@
       <div class="metric-copy">
         <span>Energia in uso</span>
         <strong><span id="usageValue">--</span><small> kW</small></strong>
-        <p>Consumo casa</p>
+        <p id="usageSourceLabel">Consumo casa</p>
       </div>
     </section>
 
@@ -54,7 +54,7 @@
       <div class="metric-copy">
         <span>Energia che butto al contatore</span>
         <strong><span id="exportValue">--</span><small> kW</small></strong>
-        <p>Immissione in rete</p>
+        <p id="exportSourceLabel">Immissione in rete</p>
       </div>
     </section>
 
@@ -63,11 +63,11 @@
         <span>Adesso</span>
         <strong id="summaryText">Sto leggendo i dati…</strong>
       </div>
-      <div id="demoBadge" class="badge">DEMO</div>
+      <div id="demoBadge" class="badge" hidden></div>
     </section>
 
     <section id="errorCard" class="error-card" hidden>
-      <strong>Connessione non riuscita</strong>
+      <strong id="errorTitle">Connessione non riuscita</strong>
       <p id="errorText"></p>
     </section>
   </main>
@@ -75,25 +75,28 @@
   <div id="settingsModal" class="modal" hidden>
     <div class="modal-card">
       <div class="modal-head">
-        <div><span class="eyebrow-text">CONFIGURAZIONE</span><h2>Dati reali</h2></div>
+        <div><span class="eyebrow-text">CONFIGURAZIONE</span><h2>Fonti dati</h2></div>
         <button id="closeSettings" class="close-btn">×</button>
       </div>
 
-      <label class="switch-row">
-        <span><strong>Modalità demo</strong><small>Usa valori simulati per provare l’app</small></span>
-        <input id="demoInput" type="checkbox" />
-      </label>
-
       <h3>SolarEdge</h3>
+      <label class="switch-row">
+        <span><strong>Demo SolarEdge</strong><small>Simula la produzione FV finché non hai l’accesso API</small></span>
+        <input id="solarDemoInput" type="checkbox" />
+      </label>
       <label>Site ID<input id="solarSiteId" autocomplete="off" /></label>
       <label>API key<input id="solarApiKey" type="password" autocomplete="off" /></label>
 
       <h3>Shelly Cloud</h3>
+      <label class="switch-row">
+        <span><strong>Demo Shelly</strong><small>Simula il consumo invece di leggere il dispositivo reale</small></span>
+        <input id="shellyDemoInput" type="checkbox" />
+      </label>
       <label>Host / Server URI<input id="shellyHost" placeholder="es. shelly-xx-eu.shelly.cloud" autocomplete="off" /></label>
       <label>Authorization key<input id="shellyAuthKey" type="password" autocomplete="off" /></label>
       <label>Device ID<input id="shellyDeviceId" autocomplete="off" /></label>
 
-      <p class="security-note">Le credenziali restano sul telefono, nello spazio privato dell’app. Non vengono inviate a server nostri.</p>
+      <p class="security-note">Puoi attivare la demo separatamente per ciascuna fonte. Se una fonte non è configurata, l’altra continua comunque a funzionare. Le credenziali restano sul telefono, nello spazio privato dell’app.</p>
       <button id="saveSettings" class="primary-btn">Salva e collega</button>
     </div>
   </div>
